@@ -22,8 +22,7 @@ jobs:
       - name: Sync to s3
         id: aws-sync
         run: |
-          FEATURE_BRANCH=$(sed 's/.*\/\([^\/]*\)/\1/' <<< $GITHUB_REF)
           mkdir _dist
           echo "<h1>Git Ref: ${GITHUB_SHA}</h1>" > _dist/index.html
-          aws s3 sync _dist/ s3://static-site-preview/${FEATURE_BRANCH}        
-          echo "::set-output name=s3_url::http://static-site-preview.s3-website-us-east-1.amazonaws.com/${FEATURE_BRANCH}"
+          aws s3 sync _dist/ s3://static-site-preview/${GITHUB_REF_NAME}        
+          echo "::set-output name=s3_url::http://static-site-preview.s3-website-us-east-1.amazonaws.com/${GITHUB_REF_NAME}"
