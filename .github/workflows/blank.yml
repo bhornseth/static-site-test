@@ -1,14 +1,9 @@
-# This is a basic workflow to help you get started with Actions
+name: PR Preview
 
-name: Preview
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   pull_request:
     branches: [ "main" ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -16,14 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: development
-      url: http://static-site-preview.s3-website-us-east-1.amazonaws.com/
+      url: ${{ steps.aws-sync.outputs.s3_url }}
     steps:
-      - name: deploy
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-east-1
-      - name: Copy files to AWS S3
+      - name: Sync to s3
+        id: aws-sync
         run: |
-          aws s3 sync ./ s3://static-site-preview        
+          mkdir _dist
+          echo "<h1>Git Ref: ${GITHUB_SHA}</h1>" > _dist/index.html
+          aws s3 sync _dist/ s3://static-site-preview/${GITHUB_REF_NAME}        
+          echo "::set-output name=s3_url::http://static-site-preview.s3-website-us-east-1.amazonaws.com/${GITHUB_REF_NAME}"
