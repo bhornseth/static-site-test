@@ -18,12 +18,10 @@ jobs:
       name: development
       url: http://static-site-preview.s3-website-us-east-1.amazonaws.com/
     steps:
-      - name: deploy
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-east-1
-      - name: Copy files to AWS S3
-        run: |
+      - run: |
           aws s3 sync ./ s3://static-site-preview        
