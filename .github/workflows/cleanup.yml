@@ -15,7 +15,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-east-1
       - name: Delete S3 Folder
+        env:
+          PR_NUMBER: ${{ github.event.number }}
         run: |
-          FOLDER=$(awk -F\/ '{ print $3 }' <<< $GITHUB_REF)
-          echo "s3://static-site-preview/${FOLDER}"
-          aws s3 rm --recursive "s3://static-site-preview/${FOLDER}"
+          echo "s3://static-site-preview/${PR_NUMBER}"
+          aws s3 rm --recursive "s3://static-site-preview/${PR_NUMBER}"
