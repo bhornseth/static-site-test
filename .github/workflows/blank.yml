@@ -19,8 +19,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: us-east-1
       - name: Sync to s3
-      - id: aws-sync
-      - run: |
+        id: aws-sync
+        run: |
           mkdir _dist
           echo "<h1>Git Ref: ${GITHUB_SHA}</h1>" > _dist/index.html
           aws s3 sync _dist/* s3://static-site-preview        
