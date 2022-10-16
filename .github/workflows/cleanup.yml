@@ -1,13 +1,20 @@
 name: Cleanup Deployment
 
 on:
-  delete
+  pull_request:
+    branches: [ "main" ]
+    types: [ "closed" ]
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Delete Deployed Branch
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+          aws-region: us-east-1
+      - name: Sync to s3
+        id: aws-sync
         run: |
-          echo "Clean up for branch ${{ github.event.ref }}"
-          env
+          aws s3 rm --recursive s3://static-site-preview/${GITHUB_REF_NAME}
